@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Keywords</title>
+    <style>
+        ul, li {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        .news-list {
+            background: #eee;
+            border-radius: 5px;
+            padding: 10px;
+            max-height: 300px;
+            overflow: auto;
+        }
+        .news-link {
+            text-decoration: none;
+            color: #000;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+            padding: 2px;
+            display: block;
+        }
+        .news-link:hover {
+            box-shadow: 0 1px 1px rgba(0,0,0,0.9);
+        }
+        .keyword-title {
+            font-size: 24px;
+            padding: 10px;
+            display: block;
+        }
+    </style>
+    <script th:inline="javascript">    function confirmDelete(button) {
+        if (confirm("Are you sure you want to delete this keyword?")) {            button.form.submit();
+        }    }
+</script>
+</head>
+<body>
+<a href="/">Homepage</a>
+<h2>Keywords</h2>
+<ul class="keyword-list">
+    <!-- Iterate over the list of keywords -->
+    <li th:each="keyword : ${keywords}" class="keyword-item">
+        <!-- Display the keyword name -->
+        <span th:text="${keyword.name}" class="keyword-title"></span>
+        <!-- Check if there are any news items associated with the keyword -->
+        <form th:action="@{/user/deleteKeyword/{id}(id=${keyword.id})}" method="post" id="deleteForm">    <input type="hidden" name="id" th:value="${keyword.id}">
+            <button type="button" onclick="confirmDelete(this)">Delete</button></form>
+
+        <ul th:if="${news[keyword.name] != null}" class="news-list">
+            <!-- Iterate over the list of news items -->
+            <li th:each="newsItem : ${news[keyword.name]}" class="news-item">
+                <!-- Display the news title as a link -->
+                <a th:href="@{${newsItem.url}}" target="_blank" th:text="${newsItem.title}" class="news-link"></a>
+            </li>
+        </ul>
+    </li>
+</ul>
+<h2>Add Keyword</h2>
+<form id="addKeywordForm" action="/user/addKeyword" method="post">
+    <div>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" autocomplete="off" required>
+        <span class="error" id="nameError"></span>
+    </div>
+    <button type="submit">Add Keyword</button>
+</form>
+</body>
+</html>
